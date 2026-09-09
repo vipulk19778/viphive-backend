@@ -1,0 +1,35 @@
+{
+  "name": "VIPHive",
+  "version": "1.0.0",
+  "description": "VIPHive-backend",
+  "keywords": [
+    "ecom"
+  ],
+  "license": "ISC",
+  "author": "vipul",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "seed": "node seeder.js",
+    "seed:destroy": "node seeder.js -d",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.10.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "joi": "^18.2.5",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.7.2",
+    "multer": "^2.2.0",
+    "nodemailer": "^9.0.1",
+    "razorpay": "^2.9.8"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

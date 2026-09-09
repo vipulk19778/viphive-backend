@@ -1,0 +1,14 @@
+const PAYMENT_STATUSES = Object.freeze({
+  CREATED: "created",
+  VERIFIED: "verified",
+  FAILED: "failed",
+});
+
+const PAYMENT_STATUS_VALUES = Object.values(PAYMENT_STATUSES);
+const DEFAULT_PAYMENT_STATUS = PAYMENT_STATUSES.CREATED;
+
+module.exports = {
+  PAYMENT_STATUSES,
+  PAYMENT_STATUS_VALUES,
+  DEFAULT_PAYMENT_STATUS,
+};
