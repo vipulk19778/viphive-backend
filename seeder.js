@@ -12,21 +12,33 @@ const { PAYMENT_STATUSES } = require("./config/payment.config");
 
 dotenv.config();
 
-const seedAdminPassword = process.env.SEED_ADMIN_PASSWORD;
 const seedUserPassword = process.env.SEED_USER_PASSWORD;
 
 const ensureSafeEnvironment = () => {
-  if (process.env.NODE_ENV === "production") {
-    console.error("Seeder blocked: seeding is not allowed in production.");
+  if (process.env.NODE_ENV !== "development") {
+    console.error("Seeder blocked: seeding is allowed only in development.");
+    process.exit(1);
+  }
+
+  let databaseName;
+
+  try {
+    databaseName = new URL(process.env.MONGO_URI).pathname.slice(1);
+  } catch {
+    console.error("Seeder blocked: MONGO_URI is invalid.");
+    process.exit(1);
+  }
+
+  if (databaseName !== "development") {
+    console.error(
+      "Seeder blocked: the MongoDB database must be named development.",
+    );
     process.exit(1);
   }
 };
 
 const ensureSeedCredentials = () => {
-  const missingCredentials = [
-    ["SEED_ADMIN_PASSWORD", seedAdminPassword],
-    ["SEED_USER_PASSWORD", seedUserPassword],
-  ]
+  const missingCredentials = [["SEED_USER_PASSWORD", seedUserPassword]]
     .filter(([, value]) => !value)
     .map(([key]) => key);
 
@@ -67,8 +79,8 @@ const userSeeds = [
   {
     name: "VIPHive Admin",
     email: "admin@viphive.com",
-    password: seedAdminPassword,
-    role: "admin",
+    password: seedUserPassword,
+    role: "user",
     verified: true,
   },
   {
