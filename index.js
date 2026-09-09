@@ -2,6 +2,9 @@
 const dotenv = require("dotenv");
 dotenv.config(); // load env variables
 
+const configureConsole = require("./config/console.config");
+configureConsole();
+
 const validateEnv = require("./config/validate-env.config");
 validateEnv();
 
