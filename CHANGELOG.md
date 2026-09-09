@@ -2,6 +2,12 @@
 
 All notable changes to VIPHive Backend are documented here.
 
+## [1.1.1] - 2026-09-10
+
+### Fixed
+
+- Forced Gmail SMTP connections to IPv4 to support production hosts without IPv6 connectivity.
+
 ## [1.1.0] - 2026-09-10
 
 ### Added
