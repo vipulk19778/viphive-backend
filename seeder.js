@@ -15,8 +15,8 @@ dotenv.config();
 const seedUserPassword = process.env.SEED_USER_PASSWORD;
 
 const ensureSafeEnvironment = () => {
-  if (process.env.NODE_ENV !== "development") {
-    console.error("Seeder blocked: seeding is allowed only in development.");
+  if (process.env.NODE_ENV === "production") {
+    console.error("Seeder blocked: seeding is not allowed in production.");
     process.exit(1);
   }
 
@@ -29,9 +29,9 @@ const ensureSafeEnvironment = () => {
     process.exit(1);
   }
 
-  if (databaseName !== "development") {
+  if (databaseName === "production") {
     console.error(
-      "Seeder blocked: the MongoDB database must be named development.",
+      "Seeder blocked: the MongoDB database must not be named production.",
     );
     process.exit(1);
   }
