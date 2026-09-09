@@ -11,7 +11,7 @@ const sendEmail = async (to, subject, text, html) => {
       html,
     });
   } catch (error) {
-    console.error("Email Error:", error);
+    console.error("Email Error:", error.message);
 
     throw new ApiError(503, "Unable to send email. Please try again later.");
   }

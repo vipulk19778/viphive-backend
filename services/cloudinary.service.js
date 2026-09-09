@@ -5,7 +5,7 @@ const ApiError = require("../errors/api-error");
 
 const deleteTempFile = async (filePath) => {
   await fs.unlink(filePath).catch((error) => {
-    console.error("Failed to delete temporary upload file:", error);
+    console.error("Failed to delete temporary upload file:", error.message);
   });
 };
 
@@ -15,7 +15,7 @@ const uploadImage = async (filePath) => {
 
     return result;
   } catch (error) {
-    console.error("Cloudinary Upload Error:", error);
+    console.error("Cloudinary Upload Error:", error.message);
 
     switch (error.http_code) {
       case 400:

@@ -12,15 +12,30 @@ const { PAYMENT_STATUSES } = require("./config/payment.config");
 
 dotenv.config();
 
-const ensureSafeEnvironment = () => {
-  const isProduction = process.env.NODE_ENV === "production";
-  const override = process.env.ALLOW_SEED_IN_PRODUCTION === "YES";
+const seedAdminPassword = process.env.SEED_ADMIN_PASSWORD;
+const seedUserPassword = process.env.SEED_USER_PASSWORD;
 
-  if (isProduction && !override) {
-    console.error(
-      "Seeder blocked: NODE_ENV is production. Set ALLOW_SEED_IN_PRODUCTION=YES only if you intentionally want to run this.",
-    );
+const ensureSafeEnvironment = () => {
+  if (process.env.NODE_ENV === "production") {
+    console.error("Seeder blocked: seeding is not allowed in production.");
     process.exit(1);
+  }
+};
+
+const ensureSeedCredentials = () => {
+  const missingCredentials = [
+    ["SEED_ADMIN_PASSWORD", seedAdminPassword],
+    ["SEED_USER_PASSWORD", seedUserPassword],
+  ]
+    .filter(([, value]) => !value)
+    .map(([key]) => key);
+
+  if (missingCredentials.length > 0) {
+    throw new Error(
+      `Missing required seeder environment variables: ${missingCredentials.join(
+        ", ",
+      )}`,
+    );
   }
 };
 
@@ -52,21 +67,21 @@ const userSeeds = [
   {
     name: "VIPHive Admin",
     email: "admin@viphive.com",
-    password: "Admin@123",
+    password: seedAdminPassword,
     role: "admin",
     verified: true,
   },
   {
     name: "John User",
     email: "user@viphive.com",
-    password: "User@123",
+    password: seedUserPassword,
     role: "user",
     verified: true,
   },
   {
     name: "Ava Buyer",
     email: "ava@viphive.com",
-    password: "User@123",
+    password: seedUserPassword,
     role: "user",
     verified: true,
   },
@@ -269,6 +284,8 @@ const run = async () => {
     await destroyData();
     return;
   }
+
+  ensureSeedCredentials();
 
   const confirmed = await confirmImport();
 

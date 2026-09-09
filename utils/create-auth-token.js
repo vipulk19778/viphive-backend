@@ -7,7 +7,7 @@ const createAuthToken = (userId) => {
       expiresIn: "30d",
     });
   } catch (error) {
-    console.error("JWT generation failed:", error);
+    console.error("JWT generation failed:", error.message);
 
     throw new ApiError(
       500,
