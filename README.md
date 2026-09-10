@@ -8,7 +8,7 @@ Express and MongoDB backend for the VIPHive e-commerce application.
 - MongoDB database
 - Cloudinary account for image uploads
 - Razorpay account for payments
-- SMTP account for email delivery
+- Resend account for email delivery
 
 ## Local Setup
 
@@ -36,9 +36,10 @@ Important variables include:
 - `PORT`: server port
 - `MONGO_URI`: environment-specific MongoDB connection string
 - `JWT_SECRET`: unique secret for each environment
-- `EMAIL_USER` and `EMAIL_PASS`: Gmail SMTP credentials; use a Gmail App Password
+- `RESEND_API_KEY`: Resend API key with permission to send email
+- `EMAIL_FROM`: sender address using a domain verified in Resend
 
-The backend connects to Gmail SMTP through port `587` using STARTTLS and IPv4 for Render compatibility. If the deployment provider blocks outbound SMTP, use a transactional email provider/API instead.
+The backend sends email through Resend's HTTPS API, so it does not require Gmail SMTP or outbound SMTP ports on Render. Verify the sender domain in Resend before deploying.
 
 - `CLOUDINARY_*`: Cloudinary credentials
 - `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET`: payment credentials
@@ -95,6 +96,8 @@ GitHub Actions runs `.github/workflows/security-check.yml` on every push and pul
 - Common AWS and payment-provider credentials
 
 `.env.example` is allowed because it contains placeholders only. Keep real secrets in ignored `.env` files locally or in the deployment provider's secret manager.
+
+GitHub Actions also runs `.github/workflows/ci.yml` for development, staging, and production branches. It installs locked dependencies, checks backend JavaScript syntax, and fails on high-severity dependency vulnerabilities.
 
 ## Versioning
 

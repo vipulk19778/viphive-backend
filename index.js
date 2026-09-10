@@ -12,7 +12,6 @@ const express = require("express");
 const cors = require("cors");
 
 const connectDB = require("./config/db.config");
-const transporter = require("./config/email.config");
 
 const errorHandlerMiddleware = require("./middleware/error.middleware");
 
@@ -90,13 +89,6 @@ const PORT = process.env.PORT || 8000;
 const startServer = async () => {
   try {
     await connectDB();
-
-    try {
-      await transporter.verify();
-      console.log("SMTP Server Connected");
-    } catch (error) {
-      console.error("SMTP Verification Error:", error);
-    }
 
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);

@@ -1,15 +1,17 @@
-const transporter = require("../config/email.config");
+const resend = require("../config/email.config");
 const ApiError = require("../errors/api-error");
 
 const sendEmail = async (to, subject, text, html) => {
   try {
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to,
+    const { error } = await resend.emails.send({
+      from: process.env.EMAIL_FROM,
+      to: [to],
       subject,
       text,
       html,
     });
+
+    if (error) throw new Error(error.message);
   } catch (error) {
     console.error("Email Error:", error.message);
 
