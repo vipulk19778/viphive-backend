@@ -36,7 +36,10 @@ Important variables include:
 - `PORT`: server port
 - `MONGO_URI`: environment-specific MongoDB connection string
 - `JWT_SECRET`: unique secret for each environment
-- `EMAIL_USER` and `EMAIL_PASS`: SMTP credentials
+- `EMAIL_USER` and `EMAIL_PASS`: Gmail SMTP credentials; use a Gmail App Password
+
+The backend connects to Gmail SMTP through port `587` using STARTTLS and IPv4 for Render compatibility. If the deployment provider blocks outbound SMTP, use a transactional email provider/API instead.
+
 - `CLOUDINARY_*`: Cloudinary credentials
 - `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET`: payment credentials
 - `SEED_USER_PASSWORD`: password used for seeded development/staging users

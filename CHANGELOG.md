@@ -2,6 +2,13 @@
 
 All notable changes to VIPHive Backend are documented here.
 
+## [1.1.2] - 2026-09-10
+
+### Fixed
+
+- Switched Gmail SMTP from port 465 to STARTTLS on port 587 for better compatibility with Render outbound networking.
+- Added explicit SMTP connection, greeting, and socket timeouts.
+
 ## [1.1.1] - 2026-09-10
 
 ### Fixed
