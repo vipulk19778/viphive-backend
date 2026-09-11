@@ -8,6 +8,7 @@ All notable changes to VIPHive Backend are documented here.
 
 - Completed the Resend email integration and removed the remaining Gmail SMTP calls and startup verification.
 - Added `EMAIL_FROM` as the verified Resend sender address.
+- Expanded the development product seed catalog with six additional products and verified image URLs.
 - Added backend CI checks for dependency installation, JavaScript syntax, and high-severity vulnerabilities.
 
 ### Fixed

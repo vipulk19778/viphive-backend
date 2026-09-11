@@ -144,6 +144,74 @@ const productSeeds = [
     rating: 4.2,
     numReviews: 35,
   },
+  {
+    name: "Leather Crossbody Bag",
+    description: "Compact everyday bag with an adjustable shoulder strap.",
+    price: 1899,
+    category: "fashion",
+    stock: 45,
+    imageUrl:
+      "https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg",
+    rating: 4.4,
+    numReviews: 31,
+  },
+  {
+    name: "Smart Fitness Watch",
+    description:
+      "Fitness tracking watch with heart-rate monitoring and notifications.",
+    price: 4499,
+    category: "electronics",
+    stock: 38,
+    imageUrl:
+      "https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg",
+    rating: 4.5,
+    numReviews: 52,
+  },
+  {
+    name: "Minimalist Table Lamp",
+    description: "Warm LED desk lamp with a clean design for workspaces.",
+    price: 1299,
+    category: "furniture",
+    stock: 72,
+    imageUrl:
+      "https://images.pexels.com/photos/1112598/pexels-photo-1112598.jpeg",
+    rating: 4.1,
+    numReviews: 24,
+  },
+  {
+    name: "Ceramic Coffee Mug Set",
+    description: "Set of two glazed ceramic mugs for coffee or tea.",
+    price: 749,
+    category: "lifestyle",
+    stock: 90,
+    imageUrl:
+      "https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg",
+    rating: 4.6,
+    numReviews: 43,
+  },
+  {
+    name: "Classic Canvas Sneakers",
+    description: "Lightweight canvas sneakers with a durable rubber sole.",
+    price: 1599,
+    category: "fashion",
+    stock: 64,
+    imageUrl:
+      "https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg",
+    rating: 4.3,
+    numReviews: 37,
+  },
+  {
+    name: "Portable Bluetooth Speaker",
+    description:
+      "Compact wireless speaker with clear sound and all-day battery life.",
+    price: 2199,
+    category: "electronics",
+    stock: 55,
+    imageUrl:
+      "https://images.pexels.com/photos/1279107/pexels-photo-1279107.jpeg",
+    rating: 4.4,
+    numReviews: 46,
+  },
 ];
 
 const buildAddress = (name) => ({
