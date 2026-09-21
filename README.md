@@ -8,7 +8,7 @@ Express and MongoDB backend for the VIPHive e-commerce application.
 - MongoDB database
 - Cloudinary account for image uploads
 - Razorpay account for payments
-- Resend account for email delivery
+- SMTP email account for email delivery
 
 ## Local Setup
 
@@ -36,10 +36,14 @@ Important variables include:
 - `PORT`: server port
 - `MONGO_URI`: environment-specific MongoDB connection string
 - `JWT_SECRET`: unique secret for each environment
-- `RESEND_API_KEY`: Resend API key with permission to send email
-- `EMAIL_FROM`: sender address using a domain verified in Resend
+- `EMAIL_HOST`: SMTP host, defaulting to `smtp.gmail.com`
+- `EMAIL_PORT`: SMTP port, usually `587` for STARTTLS
+- `EMAIL_SECURE`: `true` for implicit TLS, otherwise `false`
+- `EMAIL_USER`: SMTP account username
+- `EMAIL_PASSWORD`: SMTP password or Gmail app password
+- `EMAIL_FROM`: sender address, usually the same as `EMAIL_USER`
 
-The backend sends email through Resend's HTTPS API, so it does not require Gmail SMTP or outbound SMTP ports on Render. Verify the sender domain in Resend before deploying.
+The backend sends email through Nodemailer over SMTP. For Gmail, enable two-step verification and use an app password instead of the account password. Make sure the deployment host allows outbound SMTP connections.
 
 - `CLOUDINARY_*`: Cloudinary credentials
 - `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET`: payment credentials
@@ -55,6 +59,12 @@ npm run dev        # Start with Nodemon
 npm run seed       # Seed development or staging data
 npm run seed:destroy
 ```
+
+## Vercel Deployment
+
+Import this backend directory as a Vercel project. Vercel will use `api/index.js` as the serverless entrypoint and route requests through the existing `/api/*` Express paths.
+
+Configure the variables from `.env.example` in the Vercel project settings. Use a MongoDB deployment that accepts connections from Vercel, and use an SMTP account with an app password for email delivery. Do not run the seed commands during the Vercel build.
 
 ## Seeder Safety
 

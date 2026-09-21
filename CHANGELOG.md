@@ -12,17 +12,18 @@ All notable changes to VIPHive Backend are documented here.
 
 - Redesigned order and OTP email templates with a responsive VIPHive layout, item summaries, status cards, safe HTML escaping, and plain-text fallbacks.
 - Updated backend email templates to use the VIPHive logo and a shared slate/amber color system for brand consistency with frontend UI colors.
-- Added the bundled VIPHive logo as an inline Resend attachment so email clients can render it reliably without a logo URL environment variable.
+- Added the bundled VIPHive logo as an inline Nodemailer attachment so email clients can render it reliably without a logo URL environment variable.
 - Updated change-password OTP verification to remain valid until the new password is successfully submitted.
 
-- Completed the Resend email integration and removed the remaining Gmail SMTP calls and startup verification.
-- Added `EMAIL_FROM` as the verified Resend sender address.
+- Replaced Resend email delivery with configurable Nodemailer SMTP delivery.
+- Added SMTP host, port, security, credentials, and sender environment settings.
+- Added a Vercel serverless entrypoint, catch-all rewrite, and cached MongoDB connection handling for deployment.
 - Expanded the development product seed catalog with six additional products and verified image URLs.
 - Added backend CI checks for dependency installation, JavaScript syntax, and high-severity vulnerabilities.
 
 ### Fixed
 
-- Corrected the Resend CommonJS import so the backend can construct the email client.
+- Standardized the SMTP password environment variable as `EMAIL_PASSWORD`.
 
 ## [1.1.2] - 2026-09-10
 

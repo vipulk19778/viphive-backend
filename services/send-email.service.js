@@ -1,16 +1,16 @@
 const fs = require("fs");
 const path = require("path");
 
-const resend = require("../config/email.config");
+const transporter = require("../config/email.config");
 const ApiError = require("../errors/api-error");
 
 const logoPath = path.join(__dirname, "../images/VIPHive_logo_light.png");
 
 const sendEmail = async (to, subject, text, html) => {
   try {
-    const { error } = await resend.emails.send({
-      from: process.env.EMAIL_FROM,
-      to: [to],
+    await transporter.sendMail({
+      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+      to,
       subject,
       text,
       html,
@@ -18,13 +18,10 @@ const sendEmail = async (to, subject, text, html) => {
         {
           content: fs.readFileSync(logoPath),
           filename: "VIPHive_logo_light.png",
-          contentType: "image/png",
-          contentId: "viphive-logo",
+          cid: "viphive-logo",
         },
       ],
     });
-
-    if (error) throw new Error(error.message);
   } catch (error) {
     console.error("Email Error:", error.message);
 

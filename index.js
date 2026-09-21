@@ -17,6 +17,17 @@ const errorHandlerMiddleware = require("./middleware/error.middleware");
 
 const app = express();
 
+if (process.env.VERCEL) {
+  app.use(async (req, res, next) => {
+    try {
+      await connectDB();
+      next();
+    } catch (error) {
+      next(error);
+    }
+  });
+}
+
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN,
@@ -99,4 +110,8 @@ const startServer = async () => {
   }
 };
 
-startServer();
+if (require.main === module) {
+  startServer();
+}
+
+module.exports = app;
