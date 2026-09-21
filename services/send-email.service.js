@@ -1,5 +1,10 @@
+const fs = require("fs");
+const path = require("path");
+
 const resend = require("../config/email.config");
 const ApiError = require("../errors/api-error");
+
+const logoPath = path.join(__dirname, "../images/VIPHive_logo_light.png");
 
 const sendEmail = async (to, subject, text, html) => {
   try {
@@ -9,6 +14,14 @@ const sendEmail = async (to, subject, text, html) => {
       subject,
       text,
       html,
+      attachments: [
+        {
+          content: fs.readFileSync(logoPath),
+          filename: "VIPHive_logo_light.png",
+          contentType: "image/png",
+          contentId: "viphive-logo",
+        },
+      ],
     });
 
     if (error) throw new Error(error.message);

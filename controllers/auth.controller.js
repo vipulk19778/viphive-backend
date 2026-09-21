@@ -275,6 +275,33 @@ const loginUser = asyncHandlerMiddlware(async (req, res) => {
 //=======================================================
 
 /**
+ * @route   POST /api/auth/change-password
+ * @access  Private
+ * @desc    Change the authenticated user's password
+ */
+const changePassword = asyncHandlerMiddlware(async (req, res) => {
+  const { otp, newPassword } = req.body;
+
+  const user = await User.findById(req.user._id).select("+password");
+
+  if (!user) {
+    throw new ApiError(404, "User not found.");
+  }
+
+  await verifyOtpService(user.email, otp, OTP_PURPOSES.CHANGE_PASSWORD);
+  await consumeOtp(user.email, OTP_PURPOSES.CHANGE_PASSWORD);
+
+  user.password = await bcrypt.hash(newPassword, 10);
+  await user.save();
+
+  return successResponse(res, {
+    message: "Password changed successfully.",
+  });
+});
+
+//=======================================================
+
+/**
  * @route   POST /api/auth/verify-otp || /api/auth/verify-auth-otp
  * @access  Public || Private
  * @desc    Verify OTP
@@ -448,6 +475,7 @@ const getUsers = asyncHandlerMiddlware(async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
+  changePassword,
   verifyOtp,
   sendOtp,
   getUsers,

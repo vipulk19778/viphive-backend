@@ -7,6 +7,7 @@ const validationMiddleware = require("../middleware/validation.middleware");
 const {
   registerSchema,
   loginSchema,
+  changePasswordSchema,
   verifyOtpPublicSchema,
   verifyOtpAuthSchema,
   sendOtpPublicSchema,
@@ -16,6 +17,7 @@ const {
 const {
   registerUser,
   loginUser,
+  changePassword,
   getUsers,
   verifyOtp,
   sendOtp,
@@ -25,6 +27,12 @@ const router = express.Router();
 
 router.post("/register", validationMiddleware(registerSchema), registerUser);
 router.post("/login", validationMiddleware(loginSchema), loginUser);
+router.post(
+  "/change-password",
+  authMiddleware,
+  validationMiddleware(changePasswordSchema),
+  changePassword,
+);
 router.post(
   "/verify-otp",
   validationMiddleware(verifyOtpPublicSchema),

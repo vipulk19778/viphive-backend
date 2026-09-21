@@ -4,7 +4,15 @@ All notable changes to VIPHive Backend are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- Added an authenticated OTP-based change-password endpoint with Joi validation and bcrypt password hashing.
+
 ### Changed
+
+- Redesigned order and OTP email templates with a responsive VIPHive layout, item summaries, status cards, safe HTML escaping, and plain-text fallbacks.
+- Updated backend email templates to use the VIPHive logo and a shared slate/amber color system for brand consistency with frontend UI colors.
+- Added the bundled VIPHive logo as an inline Resend attachment so email clients can render it reliably without a logo URL environment variable.
 
 - Completed the Resend email integration and removed the remaining Gmail SMTP calls and startup verification.
 - Added `EMAIL_FROM` as the verified Resend sender address.
