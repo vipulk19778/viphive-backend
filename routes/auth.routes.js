@@ -8,6 +8,7 @@ const {
   registerSchema,
   loginSchema,
   changePasswordSchema,
+  resetPasswordSchema,
   verifyOtpPublicSchema,
   verifyOtpAuthSchema,
   sendOtpPublicSchema,
@@ -18,6 +19,7 @@ const {
   registerUser,
   loginUser,
   changePassword,
+  resetPassword,
   getUsers,
   verifyOtp,
   sendOtp,
@@ -32,6 +34,11 @@ router.post(
   authMiddleware,
   validationMiddleware(changePasswordSchema),
   changePassword,
+);
+router.post(
+  "/reset-password",
+  validationMiddleware(resetPasswordSchema),
+  resetPassword,
 );
 router.post(
   "/verify-otp",

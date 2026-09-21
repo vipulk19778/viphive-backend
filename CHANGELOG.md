@@ -27,6 +27,7 @@ All notable changes to VIPHive Backend are documented here.
 - Removed `PORT` from mandatory environment validation so the Vercel function can load without a server listener port.
 - Made the health endpoint independent of MongoDB and bounded serverless MongoDB connection attempts with a small reusable pool and timeouts.
 - Fixed product image uploads failing during Vercel initialization by using an absolute writable temporary upload directory.
+- Added a public forgot-password reset endpoint that consumes the OTP only after the new password is saved.
 
 ## [1.1.2] - 2026-09-10
 

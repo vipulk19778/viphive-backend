@@ -107,6 +107,25 @@ const changePasswordSchema = Joi.object({
   }),
 });
 
+const resetPasswordSchema = Joi.object({
+  email: reusableEmailSchema,
+  otp: Joi.string()
+    .trim()
+    .pattern(/^\d{6}$/)
+    .required()
+    .messages({
+      "string.empty": "OTP is required.",
+      "string.pattern.base": "OTP must be a valid 6-digit OTP.",
+      "any.required": "OTP is required.",
+    }),
+  newPassword: Joi.string().min(8).max(30).required().messages({
+    "string.empty": "New password is required.",
+    "string.min": "New password must be at least 8 characters.",
+    "string.max": "New password cannot exceed 30 characters.",
+    "any.required": "New password is required.",
+  }),
+});
+
 /**========================================
  * Validation schema for OTP verification
  * =======================================*/
@@ -159,6 +178,7 @@ module.exports = {
   registerSchema,
   loginSchema,
   changePasswordSchema,
+  resetPasswordSchema,
   verifyOtpPublicSchema,
   verifyOtpAuthSchema,
   sendOtpPublicSchema,

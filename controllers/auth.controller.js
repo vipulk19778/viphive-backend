@@ -299,6 +299,24 @@ const changePassword = asyncHandlerMiddlware(async (req, res) => {
   });
 });
 
+const resetPassword = asyncHandlerMiddlware(async (req, res) => {
+  const { email, otp, newPassword } = req.body;
+  const user = await User.findOne({ email }).select("+password");
+
+  if (!user) {
+    throw new ApiError(404, "User not found.");
+  }
+
+  await verifyOtpService(email, otp, OTP_PURPOSES.FORGOT_PASSWORD);
+  user.password = await bcrypt.hash(newPassword, 10);
+  await user.save();
+  await consumeOtp(email, OTP_PURPOSES.FORGOT_PASSWORD);
+
+  return successResponse(res, {
+    message: "Password reset successfully.",
+  });
+});
+
 //=======================================================
 
 /**
@@ -369,7 +387,10 @@ const verifyOtp = asyncHandlerMiddlware(async (req, res) => {
    */
   await verifyOtpService(email, otp, purpose);
 
-  if (purpose !== OTP_PURPOSES.CHANGE_PASSWORD) {
+  if (
+    purpose !== OTP_PURPOSES.CHANGE_PASSWORD &&
+    purpose !== OTP_PURPOSES.FORGOT_PASSWORD
+  ) {
     await consumeOtp(email, purpose);
   }
 
@@ -478,6 +499,7 @@ module.exports = {
   registerUser,
   loginUser,
   changePassword,
+  resetPassword,
   verifyOtp,
   sendOtp,
   getUsers,
