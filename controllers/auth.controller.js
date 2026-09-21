@@ -369,7 +369,9 @@ const verifyOtp = asyncHandlerMiddlware(async (req, res) => {
    */
   await verifyOtpService(email, otp, purpose);
 
-  await consumeOtp(email, purpose);
+  if (purpose !== OTP_PURPOSES.CHANGE_PASSWORD) {
+    await consumeOtp(email, purpose);
+  }
 
   return successResponse(res, {
     message: "OTP verified successfully.",
