@@ -1,9 +1,17 @@
 const express = require("express");
+const fs = require("fs");
 const multer = require("multer");
+const path = require("path");
 
 const authMiddleware = require("../middleware/auth.middleware");
 const adminMiddleware = require("../middleware/admin.middleware");
-const upload = multer({ dest: "uploads/" });
+const uploadDirectory = process.env.VERCEL
+  ? "/tmp/viphive-uploads"
+  : path.resolve(__dirname, "../uploads");
+
+fs.mkdirSync(uploadDirectory, { recursive: true });
+
+const upload = multer({ dest: uploadDirectory });
 
 const validationMiddleware = require("../middleware/validation.middleware.js");
 const {

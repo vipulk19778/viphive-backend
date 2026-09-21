@@ -17,17 +17,6 @@ const errorHandlerMiddleware = require("./middleware/error.middleware");
 
 const app = express();
 
-if (process.env.VERCEL) {
-  app.use(async (req, res, next) => {
-    try {
-      await connectDB();
-      next();
-    } catch (error) {
-      next(error);
-    }
-  });
-}
-
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN,
@@ -39,6 +28,21 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.get("/api/health", (req, res) => {
+  res.send("VIPHive Backend is working properly!");
+});
+
+if (process.env.VERCEL) {
+  app.use(async (req, res, next) => {
+    try {
+      await connectDB();
+      next();
+    } catch (error) {
+      next(error);
+    }
+  });
+}
+
 //======================Import Routes =========================
 
 const authRouter = require("./routes/auth.routes");
@@ -48,14 +52,6 @@ const paymentRouter = require("./routes/payment.routes");
 const analyticsRouter = require("./routes/analytics.route");
 
 //======================Routes ==================================
-
-/**
- * @route GET /api/health
- * @description Health check
- */
-app.get("/api/health", (req, res) => {
-  res.send("VIPHive Backend is working properly!");
-});
 
 /**
  * @route GET /api/auth

@@ -7,7 +7,12 @@ const connectDB = async () => {
 
   if (!connectionPromise) {
     connectionPromise = mongoose
-      .connect(process.env.MONGO_URI)
+      .connect(process.env.MONGO_URI, {
+        maxPoolSize: 5,
+        maxIdleTimeMS: 10000,
+        serverSelectionTimeoutMS: 10000,
+        connectTimeoutMS: 10000,
+      })
       .catch((error) => {
         connectionPromise = undefined;
         throw error;
