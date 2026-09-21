@@ -3,7 +3,6 @@ const validateEnv = () => {
   const requiredEnvVariables = [
     "NODE_ENV",
     "CORS_ORIGIN",
-    "PORT",
     "MONGO_URI",
     "JWT_SECRET",
     "EMAIL_USER",

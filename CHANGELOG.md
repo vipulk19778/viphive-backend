@@ -24,6 +24,7 @@ All notable changes to VIPHive Backend are documented here.
 ### Fixed
 
 - Standardized the SMTP password environment variable as `EMAIL_PASSWORD`.
+- Removed `PORT` from mandatory environment validation so the Vercel function can load without a server listener port.
 
 ## [1.1.2] - 2026-09-10
 
