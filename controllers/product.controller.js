@@ -6,6 +6,8 @@ const { successResponse } = require("../utils/response");
 const ApiError = require("../errors/api-error");
 const { uploadImage } = require("../services/cloudinary.service");
 
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 /**
  * @route   GET /api/products
  * @access  Public
@@ -15,16 +17,26 @@ const getProducts = asyncHandlerMiddlware(async (req, res) => {
   const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
   const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 100);
   const skip = (page - 1) * limit;
+  const query = String(req.query.q || "").trim();
+  const filter = query
+    ? {
+        $or: [
+          { name: { $regex: escapeRegex(query), $options: "i" } },
+          { description: { $regex: escapeRegex(query), $options: "i" } },
+          { category: { $regex: escapeRegex(query), $options: "i" } },
+        ],
+      }
+    : {};
 
   const [products, total] = await Promise.all([
     Product.find(
-      {},
+      filter,
       "name description price category stock imageUrl rating numReviews",
     )
       .skip(skip)
       .limit(limit)
       .lean(),
-    Product.countDocuments(),
+    Product.countDocuments(filter),
   ]);
 
   res.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
