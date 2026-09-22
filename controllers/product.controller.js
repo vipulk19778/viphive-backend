@@ -18,6 +18,13 @@ const getProducts = asyncHandlerMiddlware(async (req, res) => {
   const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 100);
   const skip = (page - 1) * limit;
   const query = String(req.query.q || "").trim();
+  const requestedSort = String(req.query.sort || "featured");
+  const sort = {
+    featured: { rating: -1, numReviews: -1, name: 1 },
+    rating: { rating: -1, numReviews: -1, name: 1 },
+    "price-low": { price: 1, name: 1 },
+    "price-high": { price: -1, name: 1 },
+  }[requestedSort] || { rating: -1, numReviews: -1, name: 1 };
   const filter = query
     ? {
         $or: [
@@ -33,6 +40,7 @@ const getProducts = asyncHandlerMiddlware(async (req, res) => {
       filter,
       "name description price category stock imageUrl rating numReviews",
     )
+      .sort(sort)
       .skip(skip)
       .limit(limit)
       .lean(),
