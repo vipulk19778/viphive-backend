@@ -30,8 +30,6 @@ const getPayments = asyncHandlerMiddlware(async (req, res) => {
     "paymentId-desc": { paymentId: -1 },
     "totalAmount-asc": { totalAmount: 1 },
     "totalAmount-desc": { totalAmount: -1 },
-    "paymentStatus-asc": { paymentStatus: 1 },
-    "paymentStatus-desc": { paymentStatus: -1 },
   }[requestedSort] || { createdAt: -1 };
 
   const query = {
@@ -43,13 +41,15 @@ const getPayments = asyncHandlerMiddlware(async (req, res) => {
       ],
     },
   };
-
   const filter = queryText
     ? {
         $and: [
           query,
           {
             $or: [
+              ...(mongoose.Types.ObjectId.isValid(queryText)
+                ? [{ _id: queryText }]
+                : []),
               { paymentId: { $regex: queryText, $options: "i" } },
               { razorpayOrderId: { $regex: queryText, $options: "i" } },
               { paymentStatus: { $regex: queryText, $options: "i" } },

@@ -73,8 +73,12 @@ const getOrders = asyncHandlerMiddlware(async (req, res) => {
     })
       .select("_id")
       .lean();
+    const orderIdFilter = mongoose.Types.ObjectId.isValid(queryText)
+      ? [{ _id: queryText }]
+      : [];
     filter = {
       $or: [
+        ...orderIdFilter,
         { user: { $in: matchingUsers.map((user) => user._id) } },
         { "address.fullName": queryRegex },
         { status: queryRegex },

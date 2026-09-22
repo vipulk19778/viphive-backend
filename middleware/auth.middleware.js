@@ -26,6 +26,10 @@ const authMiddleware = asyncHandlerMiddlware(async (req, res, next) => {
     throw new ApiError(401, "Not authorized, user not found");
   }
 
+  if (!user.verified) {
+    throw new ApiError(403, "Please verify your email before continuing.");
+  }
+
   req.user = user;
 
   next();
