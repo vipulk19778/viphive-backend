@@ -24,6 +24,7 @@ All notable changes to VIPHive Backend are documented here.
 
 ### Fixed
 
+- Normalized trailing slashes in `CORS_ORIGIN` so staging frontend requests pass browser CORS validation.
 - Standardized the SMTP password environment variable as `EMAIL_PASSWORD`.
 - Removed `PORT` from mandatory environment validation so the Vercel function can load without a server listener port.
 - Made the health endpoint independent of MongoDB and bounded serverless MongoDB connection attempts with a small reusable pool and timeouts.
