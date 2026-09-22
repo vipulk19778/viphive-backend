@@ -16,10 +16,11 @@ const connectDB = require("./config/db.config");
 const errorHandlerMiddleware = require("./middleware/error.middleware");
 
 const app = express();
+const corsOrigin = process.env.CORS_ORIGIN?.replace(/\/+$/, "");
 
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: corsOrigin,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
