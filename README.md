@@ -47,7 +47,6 @@ The backend sends email through Nodemailer over SMTP. For Gmail, enable two-step
 
 - `CLOUDINARY_*`: Cloudinary credentials
 - `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET`: payment credentials
-- `SEED_USER_PASSWORD`: password used for seeded development/staging users
 
 Use separate MongoDB databases and external service credentials for development, staging, and production. Use Razorpay test credentials outside production.
 
@@ -56,29 +55,13 @@ Use separate MongoDB databases and external service credentials for development,
 ```bash
 npm start          # Start the server
 npm run dev        # Start with Nodemon
-npm run seed       # Seed development or staging data
-npm run seed:destroy
 ```
 
 ## Vercel Deployment
 
 Import this backend directory as a Vercel project. Vercel will use `api/index.js` as the serverless entrypoint and route requests through the existing `/api/*` Express paths.
 
-Configure the variables from `.env.example` in the Vercel project settings. Use a MongoDB deployment that accepts connections from Vercel, and use an SMTP account with an app password for email delivery. Do not run the seed commands during the Vercel build.
-
-## Seeder Safety
-
-The seeder creates dummy regular users, products, orders, and OTP data. It does not create an admin account.
-
-Before importing data, it asks for an explicit `YES` confirmation. The import and destroy operations delete existing data from the `orders`, `products`, `users`, and `otps` collections.
-
-The seeder is blocked when:
-
-- `NODE_ENV=production`
-- The MongoDB database name is `production`
-- `MONGO_URI` is invalid
-
-Only run the seeder against a disposable development or staging database. Never use a production MongoDB URI.
+Configure the variables from `.env.example` in the Vercel project settings. Use a MongoDB deployment that accepts connections from Vercel, and use an SMTP account with an app password for email delivery.
 
 ## Deployment
 
