@@ -4,12 +4,15 @@ All notable changes to VIPHive Backend are documented here.
 
 ## [Unreleased]
 
+- Extended MongoDB connection idle time to reduce reconnects on warm serverless instances.
+
 ### Added
 
 - Added an authenticated OTP-based change-password endpoint with Joi validation and bcrypt password hashing.
 
 ### Changed
 
+- Added short-lived CDN caching and a focused field projection to speed up public product listing responses.
 - Added a root endpoint redirect from `/` to `/api/health` for convenient API health checks.
 - Redesigned order and OTP email templates with a responsive VIPHive layout, item summaries, status cards, safe HTML escaping, and plain-text fallbacks.
 - Updated backend email templates to use the VIPHive logo and a shared slate/amber color system for brand consistency with frontend UI colors.

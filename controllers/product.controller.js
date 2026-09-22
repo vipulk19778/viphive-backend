@@ -17,9 +17,17 @@ const getProducts = asyncHandlerMiddlware(async (req, res) => {
   const skip = (page - 1) * limit;
 
   const [products, total] = await Promise.all([
-    Product.find({}).skip(skip).limit(limit).lean(),
+    Product.find(
+      {},
+      "name description price category stock imageUrl rating numReviews",
+    )
+      .skip(skip)
+      .limit(limit)
+      .lean(),
     Product.countDocuments(),
   ]);
+
+  res.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
 
   return successResponse(res, {
     message: "Products fetched successfully",

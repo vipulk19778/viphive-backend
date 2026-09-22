@@ -9,7 +9,7 @@ const connectDB = async () => {
     connectionPromise = mongoose
       .connect(process.env.MONGO_URI, {
         maxPoolSize: 5,
-        maxIdleTimeMS: 10000,
+        maxIdleTimeMS: 120000,
         serverSelectionTimeoutMS: 10000,
         connectTimeoutMS: 10000,
       })
