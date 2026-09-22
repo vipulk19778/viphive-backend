@@ -39,7 +39,7 @@ const getProducts = asyncHandlerMiddlware(async (req, res) => {
       }
     : {};
 
-  const [products, total] = await Promise.all([
+  const [products, total, categories] = await Promise.all([
     Product.find(
       filter,
       "name description price category stock imageUrl rating numReviews",
@@ -49,6 +49,7 @@ const getProducts = asyncHandlerMiddlware(async (req, res) => {
       .limit(limit)
       .lean(),
     Product.countDocuments(filter),
+    Product.distinct("category"),
   ]);
 
   res.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
@@ -63,6 +64,9 @@ const getProducts = asyncHandlerMiddlware(async (req, res) => {
       totalPages: Math.ceil(total / limit),
       hasNextPage: page * limit < total,
       hasPreviousPage: page > 1,
+      categories: categories.sort((first, second) =>
+        first.localeCompare(second),
+      ),
     },
   });
 });
