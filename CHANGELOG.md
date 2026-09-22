@@ -5,6 +5,7 @@ All notable changes to VIPHive Backend are documented here.
 ## [Unreleased]
 
 - Extended MongoDB connection idle time to reduce reconnects on warm serverless instances.
+- Added pagination and search filtering to admin Users, Orders, and Payments list endpoints.
 
 ### Added
 

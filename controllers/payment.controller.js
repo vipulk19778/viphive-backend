@@ -21,6 +21,7 @@ const getPayments = asyncHandlerMiddlware(async (req, res) => {
   const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
   const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 100);
   const skip = (page - 1) * limit;
+  const queryText = String(req.query.q || "").trim();
 
   const query = {
     paymentStatus: {
@@ -32,14 +33,30 @@ const getPayments = asyncHandlerMiddlware(async (req, res) => {
     },
   };
 
+  const filter = queryText
+    ? {
+        $and: [
+          query,
+          {
+            $or: [
+              { paymentId: { $regex: queryText, $options: "i" } },
+              { razorpayOrderId: { $regex: queryText, $options: "i" } },
+              { paymentStatus: { $regex: queryText, $options: "i" } },
+              { "address.fullName": { $regex: queryText, $options: "i" } },
+            ],
+          },
+        ],
+      }
+    : query;
+
   const [payments, total] = await Promise.all([
-    Order.find(query)
+    Order.find(filter)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .populate("user", "name email")
       .lean(),
-    Order.countDocuments(query),
+    Order.countDocuments(filter),
   ]);
 
   return successResponse(res, {

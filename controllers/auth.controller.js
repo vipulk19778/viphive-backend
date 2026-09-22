@@ -19,6 +19,8 @@ const createAuthToken = require("../utils/create-auth-token");
 const { OTP_PURPOSES } = require("../config/otp.config");
 const buildOtpEmail = require("../utils/email-templates/otp-email");
 
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 const PUBLIC_OTP_PURPOSES = [
   OTP_PURPOSES.REGISTER,
   OTP_PURPOSES.FORGOT_PASSWORD,
@@ -484,14 +486,39 @@ const sendOtp = asyncHandlerMiddlware(async (req, res) => {
 /**
  * @route   GET /api/auth/users
  * @access  Private/Admin
- * @desc    Get all users
+ * @desc    Get all users with pagination
  */
 const getUsers = asyncHandlerMiddlware(async (req, res) => {
-  const users = await User.find({}).lean();
+  const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+  const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 20, 1), 100);
+  const skip = (page - 1) * limit;
+  const query = String(req.query.q || "").trim();
+  const filter = query
+    ? {
+        $or: [
+          { name: { $regex: escapeRegex(query), $options: "i" } },
+          { email: { $regex: escapeRegex(query), $options: "i" } },
+          { role: { $regex: escapeRegex(query), $options: "i" } },
+        ],
+      }
+    : {};
+
+  const [users, total] = await Promise.all([
+    User.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
+    User.countDocuments(filter),
+  ]);
 
   return successResponse(res, {
     message: "Users fetched successfully.",
     data: users,
+    meta: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+      hasNextPage: page * limit < total,
+      hasPreviousPage: page > 1,
+    },
   });
 });
 

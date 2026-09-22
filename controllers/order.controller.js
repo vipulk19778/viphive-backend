@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const Order = require("../model/order.model");
+const User = require("../model/user.model");
 const asyncHandlerMiddlware = require("../middleware/asynchandler.middleware");
 const ApiError = require("../errors/api-error");
 const { successResponse } = require("../utils/response");
@@ -51,16 +52,35 @@ const getOrders = asyncHandlerMiddlware(async (req, res) => {
   const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
   const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 100);
   const skip = (page - 1) * limit;
+  const queryText = String(req.query.q || "").trim();
+  let filter = {};
+
+  if (queryText) {
+    const queryRegex = { $regex: queryText, $options: "i" };
+    const matchingUsers = await User.find({
+      $or: [{ name: queryRegex }, { email: queryRegex }],
+    })
+      .select("_id")
+      .lean();
+    filter = {
+      $or: [
+        { user: { $in: matchingUsers.map((user) => user._id) } },
+        { "address.fullName": queryRegex },
+        { status: queryRegex },
+        { paymentStatus: queryRegex },
+      ],
+    };
+  }
 
   const [orders, total] = await Promise.all([
-    Order.find({})
+    Order.find(filter)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .populate("user", "name email")
       .populate("items.product", "name imageUrl price")
       .lean(),
-    Order.countDocuments(),
+    Order.countDocuments(filter),
   ]);
 
   return successResponse(res, {
