@@ -22,6 +22,17 @@ const getPayments = asyncHandlerMiddlware(async (req, res) => {
   const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 100);
   const skip = (page - 1) * limit;
   const queryText = String(req.query.q || "").trim();
+  const requestedSort = String(req.query.sort || "createdAt-desc");
+  const sort = {
+    "createdAt-asc": { createdAt: 1 },
+    "createdAt-desc": { createdAt: -1 },
+    "paymentId-asc": { paymentId: 1 },
+    "paymentId-desc": { paymentId: -1 },
+    "totalAmount-asc": { totalAmount: 1 },
+    "totalAmount-desc": { totalAmount: -1 },
+    "paymentStatus-asc": { paymentStatus: 1 },
+    "paymentStatus-desc": { paymentStatus: -1 },
+  }[requestedSort] || { createdAt: -1 };
 
   const query = {
     paymentStatus: {
@@ -51,7 +62,7 @@ const getPayments = asyncHandlerMiddlware(async (req, res) => {
 
   const [payments, total] = await Promise.all([
     Order.find(filter)
-      .sort({ createdAt: -1 })
+      .sort(sort)
       .skip(skip)
       .limit(limit)
       .populate("user", "name email")

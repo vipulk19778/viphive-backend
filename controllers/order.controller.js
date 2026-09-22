@@ -53,6 +53,17 @@ const getOrders = asyncHandlerMiddlware(async (req, res) => {
   const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 100);
   const skip = (page - 1) * limit;
   const queryText = String(req.query.q || "").trim();
+  const requestedSort = String(req.query.sort || "createdAt-desc");
+  const sort = {
+    "createdAt-asc": { createdAt: 1 },
+    "createdAt-desc": { createdAt: -1 },
+    "customer-asc": { "address.fullName": 1 },
+    "customer-desc": { "address.fullName": -1 },
+    "totalAmount-asc": { totalAmount: 1 },
+    "totalAmount-desc": { totalAmount: -1 },
+    "status-asc": { status: 1 },
+    "status-desc": { status: -1 },
+  }[requestedSort] || { createdAt: -1 };
   let filter = {};
 
   if (queryText) {
@@ -74,7 +85,7 @@ const getOrders = asyncHandlerMiddlware(async (req, res) => {
 
   const [orders, total] = await Promise.all([
     Order.find(filter)
-      .sort({ createdAt: -1 })
+      .sort(sort)
       .skip(skip)
       .limit(limit)
       .populate("user", "name email")

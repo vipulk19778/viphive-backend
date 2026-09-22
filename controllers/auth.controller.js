@@ -493,6 +493,19 @@ const getUsers = asyncHandlerMiddlware(async (req, res) => {
   const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 20, 1), 100);
   const skip = (page - 1) * limit;
   const query = String(req.query.q || "").trim();
+  const requestedSort = String(req.query.sort || "createdAt-desc");
+  const sort = {
+    "name-asc": { name: 1 },
+    "name-desc": { name: -1 },
+    "email-asc": { email: 1 },
+    "email-desc": { email: -1 },
+    "role-asc": { role: 1 },
+    "role-desc": { role: -1 },
+    "verified-asc": { verified: 1 },
+    "verified-desc": { verified: -1 },
+    "createdAt-asc": { createdAt: 1 },
+    "createdAt-desc": { createdAt: -1 },
+  }[requestedSort] || { createdAt: -1 };
   const filter = query
     ? {
         $or: [
@@ -504,7 +517,7 @@ const getUsers = asyncHandlerMiddlware(async (req, res) => {
     : {};
 
   const [users, total] = await Promise.all([
-    User.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
+    User.find(filter).sort(sort).skip(skip).limit(limit).lean(),
     User.countDocuments(filter),
   ]);
 

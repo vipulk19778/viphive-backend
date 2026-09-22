@@ -18,13 +18,17 @@ const getProducts = asyncHandlerMiddlware(async (req, res) => {
   const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 100);
   const skip = (page - 1) * limit;
   const query = String(req.query.q || "").trim();
-  const requestedSort = String(req.query.sort || "featured");
+  const requestedSort = String(req.query.sort || "name-asc");
   const sort = {
-    featured: { rating: -1, numReviews: -1, name: 1 },
-    rating: { rating: -1, numReviews: -1, name: 1 },
-    "price-low": { price: 1, name: 1 },
-    "price-high": { price: -1, name: 1 },
-  }[requestedSort] || { rating: -1, numReviews: -1, name: 1 };
+    "name-asc": { name: 1 },
+    "name-desc": { name: -1 },
+    "category-asc": { category: 1, name: 1 },
+    "category-desc": { category: -1, name: 1 },
+    "price-asc": { price: 1, name: 1 },
+    "price-desc": { price: -1, name: 1 },
+    "stock-asc": { stock: 1, name: 1 },
+    "stock-desc": { stock: -1, name: 1 },
+  }[requestedSort] || { name: 1 };
   const filter = query
     ? {
         $or: [
