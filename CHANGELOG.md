@@ -10,6 +10,7 @@ All notable changes to VIPHive Backend are documented here.
 
 ### Changed
 
+- Added a root endpoint redirect from `/` to `/api/health` for convenient API health checks.
 - Redesigned order and OTP email templates with a responsive VIPHive layout, item summaries, status cards, safe HTML escaping, and plain-text fallbacks.
 - Updated backend email templates to use the VIPHive logo and a shared slate/amber color system for brand consistency with frontend UI colors.
 - Added the bundled VIPHive logo as an inline Nodemailer attachment so email clients can render it reliably without a logo URL environment variable.
