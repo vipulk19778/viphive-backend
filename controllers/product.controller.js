@@ -18,6 +18,7 @@ const getProducts = asyncHandlerMiddlware(async (req, res) => {
   const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 100);
   const skip = (page - 1) * limit;
   const query = String(req.query.q || "").trim();
+  const category = String(req.query.category || "").trim();
   const requestedSort = String(req.query.sort || "name-asc");
   const sort = {
     "name-asc": { name: 1 },
@@ -29,15 +30,22 @@ const getProducts = asyncHandlerMiddlware(async (req, res) => {
     "stock-asc": { stock: 1, name: 1 },
     "stock-desc": { stock: -1, name: 1 },
   }[requestedSort] || { name: 1 };
-  const filter = query
-    ? {
-        $or: [
-          { name: { $regex: escapeRegex(query), $options: "i" } },
-          { description: { $regex: escapeRegex(query), $options: "i" } },
-          { category: { $regex: escapeRegex(query), $options: "i" } },
-        ],
-      }
-    : {};
+  const filters = [];
+  if (query) {
+    filters.push({
+      $or: [
+        { name: { $regex: escapeRegex(query), $options: "i" } },
+        { description: { $regex: escapeRegex(query), $options: "i" } },
+        { category: { $regex: escapeRegex(query), $options: "i" } },
+      ],
+    });
+  }
+  if (category) {
+    filters.push({
+      category: { $regex: `^${escapeRegex(category)}$`, $options: "i" },
+    });
+  }
+  const filter = filters.length > 1 ? { $and: filters } : (filters[0] ?? {});
 
   const [products, total, categories] = await Promise.all([
     Product.find(

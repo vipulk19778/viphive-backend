@@ -9,6 +9,7 @@ All notable changes to VIPHive Backend are documented here.
 - Added allowlisted sorting for admin Products, Users, Orders, and Payments before pagination.
 - Blocked unverified users from protected API routes.
 - Added sorted product categories to paginated product metadata.
+- Added category filtering to the paginated products endpoint.
 
 ### Added
 
