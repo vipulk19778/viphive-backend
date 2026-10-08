@@ -12,6 +12,7 @@ const validationMiddleware = require("../middleware/validation.middleware");
 const {
   registerSchema,
   loginSchema,
+  refreshTokenSchema,
   changePasswordSchema,
   resetPasswordSchema,
   verifyOtpPublicSchema,
@@ -23,6 +24,7 @@ const {
 const {
   registerUser,
   loginUser,
+  refreshAuthToken,
   changePassword,
   resetPassword,
   getUsers,
@@ -43,6 +45,12 @@ router.post(
   authRateLimiter,
   validationMiddleware(loginSchema),
   loginUser,
+);
+router.post(
+  "/refresh",
+  authRateLimiter,
+  validationMiddleware(refreshTokenSchema),
+  refreshAuthToken,
 );
 router.post(
   "/change-password",

@@ -14,7 +14,10 @@ const {
 } = require("../services/otp.service");
 
 const { successResponse } = require("../utils/response");
-const createAuthToken = require("../utils/create-auth-token");
+const {
+  createAuthTokens,
+  verifyRefreshToken,
+} = require("../utils/create-auth-token");
 
 const { OTP_PURPOSES } = require("../config/otp.config");
 const buildOtpEmail = require("../utils/email-templates/otp-email");
@@ -241,7 +244,9 @@ const registerUser = asyncHandlerMiddlware(async (req, res) => {
 const loginUser = asyncHandlerMiddlware(async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await User.findOne({ email }).select("+password").lean();
+  const user = await User.findOne({ email })
+    .select("+password +refreshTokenVersion")
+    .lean();
 
   if (!user) {
     throw new ApiError(401, "Invalid email or password.");
@@ -257,7 +262,7 @@ const loginUser = asyncHandlerMiddlware(async (req, res) => {
     throw new ApiError(403, "Please verify your email before logging in.");
   }
 
-  const token = createAuthToken(user._id);
+  const tokens = createAuthTokens(user._id, user.refreshTokenVersion);
 
   return successResponse(res, {
     message: "Login successful.",
@@ -266,10 +271,58 @@ const loginUser = asyncHandlerMiddlware(async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
-      token,
+      ...tokens,
       verified: user.verified,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
+    },
+  });
+});
+
+//=======================================================
+
+/**
+ * @route   POST /api/auth/refresh
+ * @access  Public
+ * @desc    Issue a new access and refresh token pair
+ */
+const refreshAuthToken = asyncHandlerMiddlware(async (req, res) => {
+  const { refreshToken } = req.body;
+  const decoded = verifyRefreshToken(refreshToken);
+  const user = await User.findOne({
+    _id: decoded.id,
+    refreshTokenVersion: decoded.tokenVersion,
+  })
+    .select("+refreshTokenVersion")
+    .lean();
+
+  if (!user) {
+    throw new ApiError(401, "Not authorized, user not found.");
+  }
+
+  if (!user.verified) {
+    throw new ApiError(403, "Please verify your email before continuing.");
+  }
+
+  const rotatedUser = await User.findOneAndUpdate(
+    {
+      _id: user._id,
+      refreshTokenVersion: decoded.tokenVersion,
+    },
+    { $inc: { refreshTokenVersion: 1 } },
+    { new: true },
+  )
+    .select("+refreshTokenVersion")
+    .lean();
+
+  if (!rotatedUser) {
+    throw new ApiError(401, "Refresh token has already been used.");
+  }
+
+  return successResponse(res, {
+    message: "Token refreshed successfully.",
+    data: {
+      ...createAuthTokens(rotatedUser._id, rotatedUser.refreshTokenVersion),
     },
   });
 });
@@ -284,7 +337,9 @@ const loginUser = asyncHandlerMiddlware(async (req, res) => {
 const changePassword = asyncHandlerMiddlware(async (req, res) => {
   const { otp, newPassword } = req.body;
 
-  const user = await User.findById(req.user._id).select("+password");
+  const user = await User.findById(req.user._id).select(
+    "+password +refreshTokenVersion",
+  );
 
   if (!user) {
     throw new ApiError(404, "User not found.");
@@ -294,6 +349,7 @@ const changePassword = asyncHandlerMiddlware(async (req, res) => {
   await consumeOtp(user.email, OTP_PURPOSES.CHANGE_PASSWORD);
 
   user.password = await bcrypt.hash(newPassword, 10);
+  user.refreshTokenVersion += 1;
   await user.save();
 
   return successResponse(res, {
@@ -303,7 +359,9 @@ const changePassword = asyncHandlerMiddlware(async (req, res) => {
 
 const resetPassword = asyncHandlerMiddlware(async (req, res) => {
   const { email, otp, newPassword } = req.body;
-  const user = await User.findOne({ email }).select("+password");
+  const user = await User.findOne({ email }).select(
+    "+password +refreshTokenVersion",
+  );
 
   if (!user) {
     throw new ApiError(404, "User not found.");
@@ -311,6 +369,7 @@ const resetPassword = asyncHandlerMiddlware(async (req, res) => {
 
   await verifyOtpService(email, otp, OTP_PURPOSES.FORGOT_PASSWORD);
   user.password = await bcrypt.hash(newPassword, 10);
+  user.refreshTokenVersion += 1;
   await user.save();
   await consumeOtp(email, OTP_PURPOSES.FORGOT_PASSWORD);
 
@@ -360,7 +419,7 @@ const verifyOtp = asyncHandlerMiddlware(async (req, res) => {
     /*
      * Generate token before modifying user state.
      */
-    const token = createAuthToken(user._id);
+    const tokens = createAuthTokens(user._id, user.refreshTokenVersion);
 
     user.verified = true;
     await user.save();
@@ -374,7 +433,7 @@ const verifyOtp = asyncHandlerMiddlware(async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        token,
+        ...tokens,
         verified: user.verified,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
@@ -538,6 +597,7 @@ const getUsers = asyncHandlerMiddlware(async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
+  refreshAuthToken,
   changePassword,
   resetPassword,
   verifyOtp,

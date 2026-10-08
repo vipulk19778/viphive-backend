@@ -36,6 +36,7 @@ Important variables include:
 - `PORT`: server port
 - `MONGO_URI`: environment-specific MongoDB connection string
 - `JWT_SECRET`: unique secret for each environment
+- `JWT_REFRESH_SECRET`: separate unique secret for refresh tokens
 - `EMAIL_HOST`: SMTP host, defaulting to `smtp.gmail.com`
 - `EMAIL_PORT`: SMTP port, usually `587` for STARTTLS
 - `EMAIL_SECURE`: `true` for implicit TLS, otherwise `false`

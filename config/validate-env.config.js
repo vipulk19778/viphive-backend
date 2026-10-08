@@ -5,6 +5,7 @@ const validateEnv = () => {
     "CORS_ORIGIN",
     "MONGO_URI",
     "JWT_SECRET",
+    "JWT_REFRESH_SECRET",
     "EMAIL_USER",
     "EMAIL_PASSWORD",
     "CLOUDINARY_CLOUD_NAME",
