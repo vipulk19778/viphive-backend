@@ -2,6 +2,7 @@ const express = require("express");
 
 const authMiddleware = require("../middleware/auth.middleware");
 const adminMiddleware = require("../middleware/admin.middleware");
+const { adminRateLimiter } = require("../middleware/rateLimit.middleware");
 const { getAnalytics } = require("../controllers/analytics.controller");
 
 const router = express.Router();
@@ -12,6 +13,12 @@ const router = express.Router();
  */
 
 // Analytics (Admin)
-router.get("/", authMiddleware, adminMiddleware, getAnalytics);
+router.get(
+  "/",
+  adminRateLimiter,
+  authMiddleware,
+  adminMiddleware,
+  getAnalytics,
+);
 
 module.exports = router;

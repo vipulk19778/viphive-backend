@@ -5,6 +5,7 @@ const path = require("path");
 
 const authMiddleware = require("../middleware/auth.middleware");
 const adminMiddleware = require("../middleware/admin.middleware");
+const { adminRateLimiter } = require("../middleware/rateLimit.middleware");
 const uploadDirectory = process.env.VERCEL
   ? "/tmp/viphive-uploads"
   : path.resolve(__dirname, "../uploads");
@@ -50,6 +51,7 @@ router
   .route("/")
   .get(getProducts)
   .post(
+    adminRateLimiter,
     authMiddleware,
     adminMiddleware,
     upload.single("image"),
@@ -62,12 +64,13 @@ router
   .route("/:id")
   .get(getProductById)
   .put(
+    adminRateLimiter,
     authMiddleware,
     adminMiddleware,
     upload.single("image"),
     validateProductUpdate,
     updateProduct,
   )
-  .delete(authMiddleware, adminMiddleware, deleteProduct);
+  .delete(adminRateLimiter, authMiddleware, adminMiddleware, deleteProduct);
 
 module.exports = router;

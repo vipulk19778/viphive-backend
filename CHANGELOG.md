@@ -5,6 +5,7 @@ All notable changes to VIPHive Backend are documented here.
 ## [Unreleased]
 
 - Extended MongoDB connection idle time to reduce reconnects on warm serverless instances.
+- Applied route-specific rate limiting to authentication, OTP, and administrative endpoints.
 - Added pagination and search filtering to admin Users, Orders, and Payments list endpoints.
 - Added allowlisted sorting for admin Products, Users, Orders, and Payments before pagination.
 - Blocked unverified users from protected API routes.

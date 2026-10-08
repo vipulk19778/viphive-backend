@@ -2,6 +2,7 @@ const express = require("express");
 
 const authMiddleware = require("../middleware/auth.middleware");
 const adminMiddleware = require("../middleware/admin.middleware");
+const { adminRateLimiter } = require("../middleware/rateLimit.middleware");
 const validationMiddleware = require("../middleware/validation.middleware");
 const {
   getPayments,
@@ -22,7 +23,7 @@ const router = express.Router();
  */
 
 // Get all payments (Admin)
-router.get("/", authMiddleware, adminMiddleware, getPayments);
+router.get("/", adminRateLimiter, authMiddleware, adminMiddleware, getPayments);
 
 // Create Razorpay order (User)
 router.post(

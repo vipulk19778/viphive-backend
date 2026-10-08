@@ -2,6 +2,7 @@ const express = require("express");
 
 const authMiddleware = require("../middleware/auth.middleware");
 const adminMiddleware = require("../middleware/admin.middleware");
+const { adminRateLimiter } = require("../middleware/rateLimit.middleware");
 const validationMiddleware = require("../middleware/validation.middleware.js");
 
 const {
@@ -25,7 +26,7 @@ const router = express.Router();
 // Get all orders (Admin) | Create a new order (User)
 router
   .route("/")
-  .get(authMiddleware, adminMiddleware, getOrders)
+  .get(adminRateLimiter, authMiddleware, adminMiddleware, getOrders)
   .post(authMiddleware, validationMiddleware(createOrderSchema), createOrder);
 
 // Get my orders(User)
@@ -35,6 +36,7 @@ router.route("/my-orders").get(authMiddleware, getMyOrders);
 router
   .route("/:id/status")
   .put(
+    adminRateLimiter,
     authMiddleware,
     adminMiddleware,
     validationMiddleware(updateOrderStatusSchema),

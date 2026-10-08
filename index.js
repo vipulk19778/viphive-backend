@@ -16,6 +16,7 @@ const connectDB = require("./config/db.config");
 const errorHandlerMiddleware = require("./middleware/error.middleware");
 
 const app = express();
+app.set("trust proxy", 1);
 const corsOrigin = process.env.CORS_ORIGIN?.replace(/\/+$/, "");
 
 app.use(
@@ -58,8 +59,12 @@ const productRouter = require("./routes/product.routes");
 const orderRouter = require("./routes/order.routes");
 const paymentRouter = require("./routes/payment.routes");
 const analyticsRouter = require("./routes/analytics.route");
+const { globalRateLimiter } = require("./middleware/rateLimit.middleware");
 
 //======================Routes ==================================
+
+// Global rate limiting
+app.use(globalRateLimiter);
 
 /**
  * @route GET /api/auth
