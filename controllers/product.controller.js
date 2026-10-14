@@ -7,6 +7,12 @@ const ApiError = require("../errors/api-error");
 const { uploadImage } = require("../services/cloudinary.service");
 
 const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const usableImageFilter = {
+  imageUrl: {
+    $type: "string",
+    $regex: /^https?:\/\/\S+$/i,
+  },
+};
 
 /**
  * @route   GET /api/products
@@ -45,7 +51,8 @@ const getProducts = asyncHandlerMiddlware(async (req, res) => {
       category: { $regex: `^${escapeRegex(category)}$`, $options: "i" },
     });
   }
-  const filter = filters.length > 1 ? { $and: filters } : (filters[0] ?? {});
+  filters.push(usableImageFilter);
+  const filter = filters.length > 1 ? { $and: filters } : filters[0];
 
   const [products, total, categories] = await Promise.all([
     Product.find(
@@ -57,7 +64,7 @@ const getProducts = asyncHandlerMiddlware(async (req, res) => {
       .limit(limit)
       .lean(),
     Product.countDocuments(filter),
-    Product.distinct("category"),
+    Product.distinct("category", filter),
   ]);
 
   res.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");

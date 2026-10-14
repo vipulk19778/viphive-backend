@@ -6,6 +6,7 @@ All notable changes to VIPHive Backend are documented here.
 
 - Extended MongoDB connection idle time to reduce reconnects on warm serverless instances.
 - Applied route-specific rate limiting to authentication, OTP, and administrative endpoints.
+- Excluded products without a usable image URL from listing results, counts, pagination, and categories, and validated image URLs at the model boundary.
 - Replaced long-lived auth tokens with short-lived access tokens and refresh token pairs.
 - Added JWT claim validation, one-time refresh-token rotation, password-change invalidation, Helmet headers, and bounded request parsing.
 - Added pagination and search filtering to admin Users, Orders, and Payments list endpoints.
