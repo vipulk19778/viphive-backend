@@ -9,9 +9,14 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: backend-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   checks:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout repository
@@ -28,9 +33,11 @@ jobs:
 
       - name: Check JavaScript syntax
         run: |
-          node --check index.js
-          node --check config/email.config.js
-          node --check services/send-email.service.js
+          find . \
+            -path './node_modules' -prune -o \
+            -path './.git' -prune -o \
+            -name '*.js' -type f -print0 \
+            | xargs -0 -n1 node --check
 
-      - name: Run dependency audit
-        run: npm audit --audit-level=high
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high

@@ -4,6 +4,8 @@ All notable changes to VIPHive Backend are documented here.
 
 ## [Unreleased]
 
+- Added a production Vercel deployment workflow gated to the main and master branches.
+- Updated backend CI to audit production dependencies, validate all tracked JavaScript files, and cancel superseded runs.
 - Extended MongoDB connection idle time to reduce reconnects on warm serverless instances.
 - Applied route-specific rate limiting to authentication, OTP, and administrative endpoints.
 - Excluded products without a usable image URL from listing results, counts, pagination, and categories, and validated image URLs at the model boundary.
